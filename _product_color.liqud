@@ -1,0 +1,32 @@
+{% products tag:tag.name parent_tag:parent_tag.name page:params.page sort:params.order %}
+
+  {% assign count = 0 %}
+  {% variants product_id:product.id %}
+   {% unless variant_value contains variant.properties.property1.value %}
+      {% contentfor list_colors %}
+        <span class="list-color" data-image-sku="{% images sku:variant.sku %}{% if forloop.first %}{% capture tag_image %}{{ image.url | resize: '410x410' }}{% endcapture %}{% endif %}{% endimages %}{{ tag_image }}"style="background-color:{{ variant.properties.property1.value }}">{{ variant.properties.property1.value }}</span>
+      {% endcontentfor %}
+      {% assign count = count | plus:1 %}
+      {% capture variant_value %}{{ variant.properties.property1.value }}{% endcapture %}
+   {% endunless %}
+   {% contentfor javascript %}
+     // carrega as imagens no dom
+   	<script defer>(new Image()).src = "{{ tag_image }}"</script>
+   {% endcontentfor %}
+   
+  {% endvariants %}
+  
+  <div class="wp-list-color">
+    // exibi só quando houver mais de um cor por produto
+    {% if count > 1  %}
+      {{ list_colors }}
+    {% endif %}
+  </div>
+  
+  {% assign count = 0 %}
+  {% assign list_colors = "" %}
+  {% assign tag_image = "" %}
+  {% assign variant_value = "" %}
+
+{% endproducts %}
+ 
